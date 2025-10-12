@@ -250,96 +250,112 @@ const Uploader: React.FC = () => {
 
 
     return (
-        <div className="bg-white min-h-screen flex flex-col items-center justify-start p-4 sm:p-6 md:p-8">
-            <header className="w-full max-w-2xl mx-auto text-center py-8">
-                <h1 className="text-4xl font-bold text-gray-900">Loyalfly Share</h1>
-                <p className="mt-2 text-gray-500">Sube tus archivos para generar enlaces compartibles al instante.</p>
-            </header>
+        <div className="bg-white min-h-screen">
+            <div className="max-w-screen-xl mx-auto lg:grid lg:grid-cols-[420px_1fr]">
 
-            <main className="w-full max-w-2xl mx-auto flex-grow">
-                <div
-                    onDragEnter={handleDragEnter}
-                    onDragLeave={handleDragLeave}
-                    onDragOver={handleDragOver}
-                    onDrop={handleDrop}
-                    onClick={triggerFileSelect}
-                    className={`relative block w-full border-2 border-dashed rounded-lg p-8 text-center transition-colors duration-300 ${isDragging ? 'border-[#4D17FF] bg-purple-50' : 'border-gray-300'} ${isUploading ? 'cursor-not-allowed bg-gray-100' : 'cursor-pointer hover:border-gray-400'}`}
-                >
-                    <input ref={fileInputRef} type="file" accept={acceptedFileTypes.join(',')} onChange={handleFileSelect} className="hidden" disabled={isUploading} />
-                    <div className="flex flex-col items-center">
-                        {isUploading ? (
-                            <>
-                                <Spinner />
-                                <span className="mt-2 block text-sm font-medium text-gray-900">Subiendo...</span>
-                            </>
-                        ) : (
-                            <>
-                                <UploadIcon />
-                                <span className="mt-2 block text-sm font-medium text-gray-900">Arrastra y suelta tu archivo aquí</span>
-                                <span className="block text-xs text-gray-500">o haz clic para seleccionar</span>
-                            </>
-                        )}
-                    </div>
-                </div>
+                {/* --- Left Pane (Uploader) --- */}
+                <div className="lg:sticky lg:top-0 lg:h-screen lg:flex lg:flex-col lg:border-r lg:border-gray-200">
+                    <div className="flex-grow p-4 sm:p-6 md:p-8 lg:p-10 flex flex-col justify-center">
+                        <header className="w-full max-w-2xl mx-auto lg:max-w-none lg:mx-0 text-center lg:text-left">
+                            <h1 className="text-4xl font-bold text-gray-900">Loyalfly Share</h1>
+                            <p className="mt-2 text-gray-500">Sube tus archivos para generar enlaces compartibles al instante.</p>
+                        </header>
 
-                <div className="mt-8 space-y-4">
-                    {isLoading ? (
-                         <div className="flex justify-center py-8"><Spinner /></div>
-                    ) : files.length === 0 ? (
-                        <p className="text-center text-gray-400 py-8">Tu historial de archivos aparecerá aquí.</p>
-                    ) : (
-                        files.map(file => (
-                            <div key={file.id} className="bg-gray-50 rounded-lg p-4 flex items-center justify-between shadow-sm transition-all duration-300 animate-fade-in">
-                                <div className="flex items-center gap-4 flex-1 min-w-0">
-                                    <div className="flex-shrink-0 h-12 w-12 flex items-center justify-center bg-gray-200 rounded-md">
-                                        {file.type.startsWith('image/') ? (
-                                            <img src={file.dataUrl} alt="Vista previa" className="h-full w-full object-cover rounded-md" />
-                                        ) : (
-                                            <FileIcon />
-                                        )}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        {editingFile?.id === file.id ? (
-                                            <div className="flex items-center gap-2">
-                                                <input
-                                                    ref={editInputRef}
-                                                    type="text"
-                                                    value={newDisplayName}
-                                                    onChange={(e) => setNewDisplayName(e.target.value)}
-                                                    onKeyDown={(e) => {
-                                                        if (e.key === 'Enter') handleSaveEdit();
-                                                        if (e.key === 'Escape') handleCancelEdit();
-                                                    }}
-                                                    onBlur={handleSaveEdit}
-                                                    className="text-sm font-medium text-gray-900 truncate bg-white border border-gray-300 rounded-md shadow-sm py-1 px-2 focus:outline-none focus:ring-1 focus:ring-[#4D17FF] focus:border-[#4D17FF]"
-                                                />
-                                            </div>
-                                        ) : (
-                                            <p className="text-sm font-medium text-gray-900 truncate" title={file.displayName}>{file.displayName}</p>
-                                        )}
-                                        <p className="text-xs text-gray-500">{(file.size / 1024).toFixed(1)} KB</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-2 sm:gap-3 ml-4">
-                                    <button onClick={() => handleCopyUrl(file)} className="text-xs sm:text-sm bg-gray-800 text-white font-semibold py-2 px-3 rounded-md shadow-sm hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4D17FF] transition-transform duration-200 hover:scale-105">
-                                        {copiedUrlId === file.id ? '¡Copiado!' : 'Copiar URL'}
-                                    </button>
-                                    <button onClick={() => handleEdit(file)} title="Editar nombre" className="p-2 text-gray-500 hover:text-gray-800 rounded-full hover:bg-gray-200 transition-colors">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z" /></svg>
-                                    </button>
-                                    <button onClick={() => handleDelete(file)} title="Eliminar archivo" className="p-2 text-red-500 hover:text-red-700 rounded-full hover:bg-red-100 transition-colors">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                    </button>
+                        <div className="w-full max-w-2xl mx-auto lg:max-w-none lg:mx-0 mt-8">
+                            <div
+                                onDragEnter={handleDragEnter}
+                                onDragLeave={handleDragLeave}
+                                onDragOver={handleDragOver}
+                                onDrop={handleDrop}
+                                onClick={triggerFileSelect}
+                                className={`relative block w-full border-2 border-dashed rounded-lg p-8 text-center transition-colors duration-300 ${isDragging ? 'border-[#4D17FF] bg-purple-50' : 'border-gray-300'} ${isUploading ? 'cursor-not-allowed bg-gray-100' : 'cursor-pointer hover:border-gray-400'}`}
+                            >
+                                <input ref={fileInputRef} type="file" accept={acceptedFileTypes.join(',')} onChange={handleFileSelect} className="hidden" disabled={isUploading} />
+                                <div className="flex flex-col items-center">
+                                    {isUploading ? (
+                                        <>
+                                            <Spinner />
+                                            <span className="mt-2 block text-sm font-medium text-gray-900">Subiendo...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <UploadIcon />
+                                            <span className="mt-2 block text-sm font-medium text-gray-900">Arrastra y suelta tu archivo aquí</span>
+                                            <span className="block text-xs text-gray-500">o haz clic para seleccionar</span>
+                                        </>
+                                    )}
                                 </div>
                             </div>
-                        ))
-                    )}
+                        </div>
+                    </div>
+                    <footer className="hidden lg:block p-10 pt-0 text-center lg:text-left">
+                        <p className="text-sm text-gray-400">powered by Loyalfly</p>
+                    </footer>
                 </div>
-            </main>
 
-            <footer className="py-4 mt-8">
-                <p className="text-sm text-gray-400">powered by Loyalfly</p>
-            </footer>
+                {/* --- Right Pane (File List) --- */}
+                <div className="p-4 sm:p-6 md:p-8 lg:p-10">
+                    <div className="w-full max-w-3xl mx-auto lg:mx-0">
+                         <h2 className="text-2xl font-bold text-gray-800 hidden lg:block mb-6">Historial de Archivos</h2>
+                         <div className="mt-8 lg:mt-0 space-y-4">
+                            {isLoading ? (
+                                 <div className="flex justify-center py-8"><Spinner /></div>
+                            ) : files.length === 0 ? (
+                                <p className="text-center text-gray-400 py-8">Tu historial de archivos aparecerá aquí.</p>
+                            ) : (
+                                files.map(file => (
+                                    <div key={file.id} className="bg-gray-50 rounded-lg p-4 flex items-center justify-between shadow-sm transition-all duration-300 animate-fade-in">
+                                        <div className="flex items-center gap-4 flex-1 min-w-0">
+                                            <div className="flex-shrink-0 h-12 w-12 flex items-center justify-center bg-gray-200 rounded-md">
+                                                {file.type.startsWith('image/') ? (
+                                                    <img src={file.dataUrl} alt="Vista previa" className="h-full w-full object-cover rounded-md" />
+                                                ) : (
+                                                    <FileIcon />
+                                                )}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                {editingFile?.id === file.id ? (
+                                                    <div className="flex items-center gap-2">
+                                                        <input
+                                                            ref={editInputRef}
+                                                            type="text"
+                                                            value={newDisplayName}
+                                                            onChange={(e) => setNewDisplayName(e.target.value)}
+                                                            onKeyDown={(e) => {
+                                                                if (e.key === 'Enter') handleSaveEdit();
+                                                                if (e.key === 'Escape') handleCancelEdit();
+                                                            }}
+                                                            onBlur={handleSaveEdit}
+                                                            className="text-sm font-medium text-gray-900 truncate bg-white border border-gray-300 rounded-md shadow-sm py-1 px-2 focus:outline-none focus:ring-1 focus:ring-[#4D17FF] focus:border-[#4D17FF]"
+                                                        />
+                                                    </div>
+                                                ) : (
+                                                    <p className="text-sm font-medium text-gray-900 truncate" title={file.displayName}>{file.displayName}</p>
+                                                )}
+                                                <p className="text-xs text-gray-500">{(file.size / 1024).toFixed(1)} KB</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2 sm:gap-3 ml-4">
+                                            <button onClick={() => handleCopyUrl(file)} className="text-xs sm:text-sm bg-gray-800 text-white font-semibold py-2 px-3 rounded-md shadow-sm hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4D17FF] transition-transform duration-200 hover:scale-105">
+                                                {copiedUrlId === file.id ? '¡Copiado!' : 'Copiar URL'}
+                                            </button>
+                                            <button onClick={() => handleEdit(file)} title="Editar nombre" className="p-2 text-gray-500 hover:text-gray-800 rounded-full hover:bg-gray-200 transition-colors">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z" /></svg>
+                                            </button>
+                                            <button onClick={() => handleDelete(file)} title="Eliminar archivo" className="p-2 text-red-500 hover:text-red-700 rounded-full hover:bg-red-100 transition-colors">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                     <footer className="lg:hidden py-4 mt-8 text-center">
+                        <p className="text-sm text-gray-400">powered by Loyalfly</p>
+                    </footer>
+                </div>
+            </div>
             
             <style>{`
                 @keyframes fade-in {
