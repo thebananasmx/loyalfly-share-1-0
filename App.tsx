@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { db } from './firebaseConfig';
 import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc, query, orderBy, serverTimestamp, Timestamp, getDoc } from 'firebase/firestore';
@@ -251,7 +252,7 @@ const Uploader: React.FC = () => {
 
     return (
         <div className="bg-white min-h-screen">
-            <div className="max-w-screen-xl mx-auto lg:grid lg:grid-cols-[420px_1fr]">
+            <div className="lg:grid lg:grid-cols-[420px_1fr]">
 
                 {/* --- Left Pane (Uploader) --- */}
                 <div className="lg:sticky lg:top-0 lg:h-screen lg:flex lg:flex-col lg:border-r lg:border-gray-200">
