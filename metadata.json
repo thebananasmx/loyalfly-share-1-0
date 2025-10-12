@@ -1,0 +1,5 @@
+{
+  "name": "Loyalfly Share 1.0",
+  "description": "A minimalist file sharing application that allows users to upload images and PDFs to generate an instant, shareable public link. The design is inspired by the modern aesthetic of LoyalflyQR.",
+  "requestFramePermissions": []
+}
